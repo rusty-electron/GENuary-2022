@@ -29,7 +29,6 @@ sleeping = []
 
 while running:
     screen.fill(BLACK)
-    print(len(sleeping))
 
     # calculate 2d coordinates
     x_vals = numbers * np.sin((2 * np.pi * idx_vals)/(numbers_size - 1) + angle)
