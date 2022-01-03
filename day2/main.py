@@ -6,6 +6,10 @@ import matplotlib.pyplot as plt
 # credit: https://github.com/MomentsInGraphics/BlueNoise
 import BlueNoise
 
+# for error diffusion dithering, I found a library
+# named hitherdither: https://github.com/hbldh/hitherdither and decided to use it
+import hitherdither
+
 FILENAME = "source_scaled.jpg"
 
 def perform_simple_quant(img, threshold):
@@ -46,8 +50,8 @@ if __name__ == "__main__":
     org_img = Image.open(FILENAME)
 
     # convert to grayscale
-    gray_img = org_img.convert('L')
-    gray_img = np.array(gray_img) / 255
+    gray_img_uint = org_img.convert('L')
+    gray_img = np.array(gray_img_uint) / 255
 
     # exhibit 0: random uniform noise -> simple quantization
     # res = perform_simple_quant(add_random_noise(gray_img), 0.5)
@@ -60,16 +64,31 @@ if __name__ == "__main__":
     # res = bayer_dithering(gray_img, bayer_matrix)
 
     # exhibit 3: blue noise
-    h_im, w_im = gray_img.shape
-    BN_SIZE = 64
-    texture = BlueNoise.GetVoidAndClusterBlueNoise((BN_SIZE, BN_SIZE), 1.9)
-    texture = texture / np.max(texture)
+    # h_im, w_im = gray_img.shape
+    # BN_SIZE = 64
+    # texture = BlueNoise.GetVoidAndClusterBlueNoise((BN_SIZE, BN_SIZE), 1.9)
+    # texture = texture / np.max(texture)
 
-    tiled_texture = np.tile(texture, (h_im//BN_SIZE + 1, w_im//BN_SIZE + 1))
-    res = perform_simple_quant(gray_img, tiled_texture[:h_im, :w_im])
+    # tiled_texture = np.tile(texture, (h_im//BN_SIZE + 1, w_im//BN_SIZE + 1))
+    # res = perform_simple_quant(gray_img, tiled_texture[:h_im, :w_im])
 
-    # exhibit 4:
+    # exhibit 4: error diffusion dithering
+    # possible methods
+    # "floyd-steinberg" - default
+    # "atkinson"
+    # "jarvis-judice-ninke"
+    # "stucki"
+    # "burkes"
+    # "sierra3"
+    # "sierra2"
+    # "sierra-2-4a"
 
-    plt.figure()
+    method = 'atkinson'
+    bw_pallete = hitherdither.palette.Palette([0x000000, 0xFFFFFF])
+    img_pil = org_img.convert('RGB')
+    res = hitherdither.diffusion.error_diffusion_dithering(img_pil, bw_pallete, method)
+
+    plt.figure(figsize=(8, 8))
     plt.imshow(res, cmap="gray")
-    plt.show()
+    plt.imsave('out.png', res, dpi=300, cmap="gray")
+    # plt.show()
