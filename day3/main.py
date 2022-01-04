@@ -21,7 +21,14 @@ dt = 0.1
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (200, 200, 200)
-YELLOW = (255, 255, 0)
+YELLOW = (255, 224, 102)
+
+SOFT_BLACK = (25, 40, 30)
+
+NEON_YELL = (255, 244, 79)
+NEON_BLUE = (4, 217, 255)
+
+CHILL_BLACK = (43, 45, 66)
 
 class BlackHole(pygame.sprite.Sprite):
     def __init__(self, x, y, m = 3000):
@@ -32,11 +39,11 @@ class BlackHole(pygame.sprite.Sprite):
 
     def draw(self, screen):
         # draw black hole
-        pygame.draw.circle(screen, WHITE, self.pos, self.rs)
+        pygame.draw.circle(screen, BLACK, self.pos, self.rs)
         # draw photon orbit
         pygame.draw.circle(screen, YELLOW, self.pos, self.rs * 1.5 + 12, width = 8)
         # draw accretion disc
-        pygame.draw.circle(screen, GRAY, self.pos, self.rs * 3, width = 11)
+        pygame.draw.circle(screen, SOFT_BLACK, self.pos, self.rs * 3, width = 3)
 
     def pull(self, photon):
         force = self.pos - photon.pos
@@ -53,7 +60,8 @@ class Photon(pygame.sprite.Sprite):
         self.vel = pygame.Vector2(-C_CONST, 0);
 
     def draw(self, screen):
-        pygame.draw.circle(screen, WHITE, self.pos, 1)
+        color = NEON_YELL if rng.random() > 0.5 else NEON_BLUE
+        pygame.draw.circle(screen, color, self.pos, 1)
 
     def update(self):
         delta_v = self.vel
@@ -97,13 +105,13 @@ running = True
 while running:
     while len(photons) < PH_LIMIT:
         generate_photon()
-    screen.fill(BLACK)
+    screen.fill(CHILL_BLACK)
     bh.draw(screen)
     for ph in photons:
         bh.pull(ph)
         ph.draw(screen)
         ph.update()
-        if (ph.pos - bh.pos).length() < 4:
+        if (ph.pos - bh.pos).length() < bh.rs:
             photons.remove(ph)
 
     # handle quit event
