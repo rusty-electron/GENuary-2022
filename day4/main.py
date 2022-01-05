@@ -20,6 +20,15 @@ GRAY = (200, 200, 200)
 YELLOW = (255, 224, 102)
 RED = (255, 0, 0)
 
+PALLETES = [
+        ((45, 46, 46), (251, 251, 251)),
+        ((55, 57, 46), (25, 100, 126)),
+        ((40, 83, 107), (194, 148, 138)),
+        ((34, 42, 104), (226, 173, 242)),
+        ((49, 24, 71), (236, 64, 103)),
+        ((88, 129, 87), (163, 177, 138)),
+        ]
+
 left_x = int(width * -0.5)
 right_x = int(width * 1.5)
 top_y = int(height * -0.5)
@@ -38,7 +47,7 @@ def gen_angles():
             angle = noise_val * 2 * np.pi
             grid[row][col] = angle
 
-def draw_curve(start_x, start_y, steps = 10, step_len = 15):
+def draw_curve(start_x, start_y, steps = 10, step_len = 15, col = WHITE):
     for _ in range(steps):
         x_offset = start_x - left_x
         y_offset = start_y - top_y
@@ -53,16 +62,18 @@ def draw_curve(start_x, start_y, steps = 10, step_len = 15):
         x_step = step_len * np.cos(grid_angle)
         y_step = step_len * np.sin(grid_angle)
 
-        pygame.draw.line(screen, RED, (start_x, start_y), (start_x + x_step, start_y + y_step))
+        pygame.draw.line(screen, col, (start_x, start_y), (start_x + x_step, start_y + y_step))
 
         start_x += x_step
         start_y += y_step
 
 running = True
+iteration = 0
 while running:
+    COL_PAL = PALLETES[(iteration % len(PALLETES))]
     noise = PerlinNoise(octaves = 3.5, seed = random.randint(10, 100))
     gen_angles()
-    screen.fill(WHITE)
+    screen.fill(COL_PAL[0])
 
     # show the flow field vectors
     # for idx, i in enumerate(np.arange(left_x, right_x, resolution)):
@@ -71,10 +82,10 @@ while running:
     #         pygame.draw.circle(screen, BLACK, (i, j), 1)
     #         pygame.draw.line(screen, BLACK, (i, j), (i + size*np.cos(grid[idx, jdx]), j + size * np.sin(grid[idx, jdx])))
 
-    increment = 8
+    increment = 20
     for i in range(left_x, right_x, increment):
         for j in range(top_y, bottom_y, increment):
-            draw_curve(i, j, steps = 15, step_len = 6)
+            draw_curve(i, j, steps = 25, step_len = 6, col = COL_PAL[1])
         pygame.display.update()
 
     # handle quit event
@@ -84,3 +95,4 @@ while running:
 
     clock.tick(FPS)
     pygame.display.update()
+    iteration += 1
