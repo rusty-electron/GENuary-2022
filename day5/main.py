@@ -11,7 +11,7 @@ clock = pygame.time.Clock()
 screen = pygame.display.set_mode(size)
 
 # colors
-BLACK = (0, 0, 0)
+BLACK = (31, 39, 27)
 WHITE = (255, 255, 255)
 GRAY = (200, 200, 200)
 YELLOW = (255, 224, 102)
