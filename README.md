@@ -1,3 +1,6 @@
 # GENuary 2022
 
-I will update this soon
+Update: I haven't worked on the #genuary prompts in a while as I am working for an exam but I will be back soon.
+
+I will add a README soon :P
+
